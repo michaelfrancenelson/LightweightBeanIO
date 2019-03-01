@@ -17,7 +17,8 @@ import beans.GetterGetterGetter.StringValGetter;
  *
  * @param <T>
  */
-public class AnnotatedBeanCSVReporter<T extends AnnotatedCSVBean>
+public class AnnotatedBeanReporter<T>
+//public class AnnotatedBeanCSVReporter<T extends AnnotatedCSVBean>
 {
 	private String dblFmt, sep;
 	private Class<T> clazz;
@@ -34,7 +35,8 @@ public class AnnotatedBeanCSVReporter<T extends AnnotatedCSVBean>
 	public List<String> stringValReport(T t)
 	{
 		List<String> l = new ArrayList<>(getters.size());
-		for (StringValGetter<T> g : getters) l.add(g.get(t));
+		for (StringValGetter<T> g : getters) 
+			l.add(g.get(t));
 		return l;
 	}
 
@@ -106,7 +108,7 @@ public class AnnotatedBeanCSVReporter<T extends AnnotatedCSVBean>
 	}
 	
 	/** Write the data to file and close the reporter. */
-	public void write(String filename)
+	public void writeCSV(String filename)
 	{
 		try {
 			OutputStream out = new FileOutputStream(filename);
@@ -125,12 +127,13 @@ public class AnnotatedBeanCSVReporter<T extends AnnotatedCSVBean>
 	 * @param additionalColumns
 	 * @return
 	 */
-	public static <T extends AnnotatedCSVBean> AnnotatedBeanCSVReporter<T> 
+	public static <T> AnnotatedBeanReporter<T> 
+//	public static <T extends AnnotatedCSVBean> AnnotatedBeanCSVReporter<T> 
 	factory(Class<T> clazz, String dblFmt, String sep, String... additionalColumns)
 	{
-		AnnotatedBeanCSVReporter<T> rep = new AnnotatedBeanCSVReporter<>();
+		AnnotatedBeanReporter<T> rep = new AnnotatedBeanReporter<>();
 		rep.clazz = clazz;
-		List<Field> fields = AnnotatedCSVBean.getAnnotatedFields(rep.clazz);
+		List<Field> fields = AnnotatedBeanBuilder.getAnnotatedFields(rep.clazz);
 		rep.dblFmt = dblFmt;
 		rep.sep = sep;
 		rep.getters = GetterGetterGetter.stringValGetterGetter(

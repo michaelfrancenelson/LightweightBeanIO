@@ -47,7 +47,8 @@ public class GetterGetterGetter
 	 * @param dblFmt
 	 * @return
 	 */
-	public static <T extends AnnotatedCSVBean, R> List<StringValGetter<T>>
+	public static <T, R> List<StringValGetter<T>>
+//	public static <T extends AnnotatedCSVBean, R> List<StringValGetter<T>>
 	stringValGetterGetter(Class<T> t, List<Field> ff, String dblFmt)
 	{
 		List<StringValGetter<T>> out = new ArrayList<>();
@@ -63,7 +64,8 @@ public class GetterGetterGetter
 	 * @param dblFmt
 	 * @return
 	 */
-	public static <T extends AnnotatedCSVBean, R> StringValGetter<T>
+	public static <T, R> StringValGetter<T>
+//	public static <T extends AnnotatedCSVBean, R> StringValGetter<T>
 	stringValGetterGetter(Class<T> t, Field f, String dblFmt)
 	{
 		String type = f.getType().getSimpleName();
@@ -144,7 +146,7 @@ public class GetterGetterGetter
 	 * @param f
 	 * @return
 	 */
-	public static <T extends AnnotatedCSVBean> IntGetter<T> 
+	public static <T> IntGetter<T> 
 	intGetterGetter(Class<T> t, Field f)
 	{
 		IntGetter<T> out = (T tt) -> 
@@ -162,7 +164,7 @@ public class GetterGetterGetter
 	 * @param f
 	 * @return
 	 */
-	public static <T extends AnnotatedCSVBean> DoubleGetter<T> 
+	public static <T> DoubleGetter<T> 
 	doubleGetterGetter(Class<T> t, Field f)
 	{
 		DoubleGetter<T> out = (T tt) ->
@@ -180,7 +182,7 @@ public class GetterGetterGetter
 	 * @param f
 	 * @return
 	 */
-	public static <T extends AnnotatedCSVBean> BooleanGetter<T> 
+	public static <T> BooleanGetter<T> 
 	booleanGetterGetter(Class<T> t, Field f)
 	{
 		BooleanGetter<T> out = (T tt) ->
@@ -198,7 +200,7 @@ public class GetterGetterGetter
 	 * @param f
 	 * @return
 	 */
-	public static <T extends AnnotatedCSVBean> StringGetter<T> 
+	public static <T> StringGetter<T> 
 	stringGetterGetter(Class<T> t, Field f)
 	{
 		StringGetter<T> out = (T tt) ->
@@ -216,7 +218,7 @@ public class GetterGetterGetter
 	 * @param f
 	 * @return
 	 */
-	public static <T extends AnnotatedCSVBean> ObjGetter<T> 
+	public static <T> ObjGetter<T> 
 	objectGetterGetter(Class<T> t, Field f)
 	{
 		ObjGetter<T> out = (T tt) -> 
@@ -234,7 +236,7 @@ public class GetterGetterGetter
 	 * @param f
 	 * @return
 	 */
-	public static <T extends AnnotatedCSVBean> BoxedDoubleGetter<T> 
+	public static <T> BoxedDoubleGetter<T> 
 	boxedDoubleGetterGetter(Class<T> t, Field f)
 	{
 		ObjGetter<T> g = objectGetterGetter(t, f);
@@ -247,7 +249,7 @@ public class GetterGetterGetter
 	 * @param f
 	 * @return
 	 */
-	public static <T extends AnnotatedCSVBean> BoxedIntGetter<T> 
+	public static <T> BoxedIntGetter<T> 
 	boxedIntGetterGetter(Class<T> t, Field f)
 	{
 		ObjGetter<T> g = objectGetterGetter(t, f);
@@ -260,7 +262,7 @@ public class GetterGetterGetter
 	 * @param f
 	 * @return
 	 */
-	public static <T extends AnnotatedCSVBean> BoxedBooleanGetter<T> 
+	public static <T> BoxedBooleanGetter<T> 
 	boxedBooleanGetterGetter(Class<T> t, Field f)
 	{
 		ObjGetter<T> g = objectGetterGetter(t, f);

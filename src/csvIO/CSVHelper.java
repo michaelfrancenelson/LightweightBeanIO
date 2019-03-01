@@ -29,9 +29,9 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import beans.AnnotatedBeanCSVReporter;
-import beans.AnnotatedCSVBean;
-import beans.AnnotatedTestBean;
+import beans.AnnotatedBeanReporter;
+import beans.AnnotatedBeanBuilder;
+import beans.TestBean;
 
 /**
  * https://raw.githubusercontent.com/agilepro/mendocino/master/src/com/purplehillsbooks/streams/CSVHelper.java
@@ -218,11 +218,11 @@ public class CSVHelper {
 
 		List<List<String>> ll = readFile(filename);
 		
-		List<AnnotatedTestBean> lb = AnnotatedCSVBean.factory(AnnotatedTestBean.class, ll);
+		List<TestBean> lb = AnnotatedBeanBuilder.factory(TestBean.class, ll, false);
 		
-		AnnotatedBeanCSVReporter<AnnotatedTestBean> rep =
-				AnnotatedBeanCSVReporter.factory(AnnotatedTestBean.class, "%.4f", ",", "field1", "field2");
-		for (AnnotatedTestBean b : lb)	rep.consoleReport(b);
+		AnnotatedBeanReporter<TestBean> rep =
+				AnnotatedBeanReporter.factory(TestBean.class, "%.4f", ",", "field1", "field2");
+		for (TestBean b : lb)	rep.consoleReport(b);
 		
 		List<List<String>> lt = transpose(readFile(filename));
 		
