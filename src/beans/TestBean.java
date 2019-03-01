@@ -23,18 +23,4 @@ public class TestBean
 	@FieldColumn private String s;
 	@FieldColumn private boolean b;
 	@FieldColumn private Boolean bb;
-
-//	public static void main(String[] args) {
-//		
-//		AnnotatedBeanCSVReporter<TestBean> rep =
-//				AnnotatedBeanCSVReporter.factory(TestBean.class, "%.4f", ",", "field1", "field2");
-//		
-//		List<TestBean> ll = randomFactory(5);
-//		
-//		System.out.println(rep.headerReportLine());
-//		System.out.println(rep.stringReportLine(ll.get(0)));
-//		
-//		rep.appendListToReport(ll, 9, "bb");
-//		rep.write("testOutput/annotatedTestBean.csv");
-//	}
 }

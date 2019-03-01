@@ -18,7 +18,6 @@ import beans.GetterGetterGetter.StringValGetter;
  * @param <T>
  */
 public class AnnotatedBeanReporter<T>
-//public class AnnotatedBeanCSVReporter<T extends AnnotatedCSVBean>
 {
 	private String dblFmt, sep;
 	private Class<T> clazz;
@@ -37,6 +36,40 @@ public class AnnotatedBeanReporter<T>
 		List<String> l = new ArrayList<>(getters.size());
 		for (StringValGetter<T> g : getters) 
 			l.add(g.get(t));
+		return l;
+	}
+	
+	
+	/**
+	 * 
+	 * @return a list of string representations of the bean's annotated fields
+	 */
+	public static <T> List<String> staticStringValReport(Class<T> clazz, String dblFmt)
+	{
+		List<StringValGetter<T>> getters;
+		List<Field> fields = AnnotatedBeanBuilder.getAnnotatedFields(clazz);
+
+		
+		List<Field> staticFields = new ArrayList<>();
+		for (Field f : fields)
+		{
+			   if (java.lang.reflect.Modifier.isStatic(f.getModifiers())) staticFields.add(f);  
+		}
+		
+		getters = GetterGetterGetter.stringValGetterGetter(clazz, fields, dblFmt);
+		
+		List<String> l = new ArrayList<>(getters.size());
+		
+		T t = null;
+		try {
+			t = clazz.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		
+		for (StringValGetter<T> g : getters) 
+			l.add(g.get(t));
+		
 		return l;
 	}
 
@@ -79,6 +112,22 @@ public class AnnotatedBeanReporter<T>
 		catch (IOException e) { e.printStackTrace(); }	
 	}
 
+	/** Add the current values of the annotated static variables to the report.
+	 * 
+	 * @param clazz
+	 * @param additionalColumns
+	 */
+	public void appendStaticToReport(Class<T> clazz, Object... additionalColumns)
+	{
+		List<String> ll = staticStringValReport(clazz, dblFmt);
+		concat(ll, sep, additionalColumns);
+		try {
+			bStreamOut.write(System.lineSeparator().getBytes());
+			bStreamOut.write(concat(ll, sep, additionalColumns).getBytes());
+		}
+		catch (IOException e) { e.printStackTrace(); }	
+	}
+	
 	/** Add a list of beans to the report. */
 	public void appendListToReport(List<T> list, Object... extraColumns)
 	{ for (T t : list) appendToReport(t, extraColumns); }
@@ -128,7 +177,6 @@ public class AnnotatedBeanReporter<T>
 	 * @return
 	 */
 	public static <T> AnnotatedBeanReporter<T> 
-//	public static <T extends AnnotatedCSVBean> AnnotatedBeanCSVReporter<T> 
 	factory(Class<T> clazz, String dblFmt, String sep, String... additionalColumns)
 	{
 		AnnotatedBeanReporter<T> rep = new AnnotatedBeanReporter<>();

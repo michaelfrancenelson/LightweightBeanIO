@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
@@ -30,12 +28,11 @@ import javax.xml.stream.events.XMLEvent;
  */
 public class XLSXHelper {
 
-	
-	static Logger logger = Logger.getLogger(XLSXHelper.class.getName());
+//	static Logger logger = Logger.getLogger(XLSXHelper.class.getName());
 	
 	public static List<List<String>> readXLSX(String filename)
 	{
-		logger.setLevel(Level.WARNING);
+//		logger.setLevel(Level.WARNING);
 		
 		List<List<String>> result = new ArrayList<>();
 		XMLEventReader reader = null;
@@ -132,8 +129,7 @@ public class XLSXHelper {
 			String cellType = null;
 			List<String> row = null;
 			
-			int i = 1;
-			int j = 1;
+//			int i = 1, j = 1;
 			while (reader.hasNext()) {
 				event = (XMLEvent) reader.next();
 				if (event.isStartElement()) {
@@ -143,10 +139,10 @@ public class XLSXHelper {
 						rowFound = true;
 						if (row != null) {
 							result.add(row); 
-							logger.info("XLSXHelper: adding row " + i + " to results."); //TODO
+//							logger.info("XLSXHelper: adding row " + i + " to results."); //TODO
 						}
 						row = new ArrayList<>();
-						logger.info("XLSXHelper: creating row " + i); i++; //TODO 
+//						logger.info("XLSXHelper: creating row " + i); i++; //TODO 
 					} else if (startElement.getName().getLocalPart().equalsIgnoreCase("c") && rowFound) {
 						//start element of cell in row
 						cellFound = true;
@@ -183,21 +179,21 @@ public class XLSXHelper {
 							cellValue = sharedStrings.get(Integer.valueOf(cellValue));
 						}
 						row.add(cellValue);
-						logger.info("XLSXHelper: adding " + cellValue + " to row " + i); //TODO 
+//						logger.info("XLSXHelper: adding " + cellValue + " to row " + i); //TODO 
 
 					} else if (endElement.getName().getLocalPart().equalsIgnoreCase("is")) {
 						//end element of inline string
 						inlineStringFound = false;
 						String cellValue = stringValue.toString();
 						row.add(cellValue);
-						logger.info("XLSXHelper: adding " + cellValue + " to row " + i); //TODO 
+//						logger.info("XLSXHelper: adding " + cellValue + " to row " + i); //TODO 
 					}
 				}
 			
 			}
 			if (row != null) {
 				result.add(row); 
-				logger.info("XLSXHelper: adding row " + i + " to results."); //TODO
+//				logger.info("XLSXHelper: adding row " + i + " to results."); //TODO
 			}
 			reader.close();
 			//sheet data ======================================================================================

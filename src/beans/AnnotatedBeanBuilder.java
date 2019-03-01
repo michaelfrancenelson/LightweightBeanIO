@@ -19,7 +19,6 @@ public class AnnotatedBeanBuilder
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	public static @interface FieldColumn{};
-
 	private static Random r = new Random();
 
 	/**  
@@ -27,7 +26,6 @@ public class AnnotatedBeanBuilder
 	 * @return all the fields containing the @FieldColumn annotation
 	 */
 	public static <T> List<Field> getAnnotatedFields(Class<T> c)
-	//	public static <T extends AnnotatedCSVBean> List<Field> getAnnotatedFields(Class<T> c)
 	{
 		List<Field> ll = new ArrayList<>();
 		for (Field f : c.getDeclaredFields())
@@ -58,22 +56,80 @@ public class AnnotatedBeanBuilder
 		throw new IllegalArgumentException("Input: " + s + " could not be parsed to a boolean value");
 	}
 
-	public static <T> List<T> csvFactory(Class<T> clazz, String filename) { return csvFactory(clazz, filename, false); }
+	/** Simple check that input data contains entries for all the annotated fields.
+	 * @param clazz
+	 * @param data
+	 * @return true = data oriented in rows, false = data oriented in columns
+	 */
+	private static <T> boolean testRowOrientation(Class<T> clazz, List<List<String>> data)
+	{
+		List<Field> ff = getAnnotatedFields(clazz);
+		List<String> fieldNames = new ArrayList<>();
+		for (Field f : ff) fieldNames.add(f.getName());
+		
+		boolean test = true;
+		/* Test row orientation */
+		List<String> row = data.get(0);
+		for (String f : fieldNames)
+		{
+			if (!row.contains(f))
+			{
+				test = false;
+				break;
+			}
+		}
+
+		if (test) return true;
+
+		/* Test for column orientation. */
+		test = true;
+		List<String> firstCol = new ArrayList<>();
+		for (List<String> l : data)
+		{
+			firstCol.add(l.get(0));
+		}
+
+		for (String f : fieldNames)
+		{
+			if (!firstCol.contains(f))
+			{
+				test = false;
+				break;
+			}
+		}
+
+		if (test) return false;
+
+		throw new IllegalArgumentException("Problem parsing input file.  Make sure that the"
+				+ "file contains headers corresponding to all the annotated fields in your bean");
+	}
+
+
 	
-	public static <T> List<T> csvFactory(Class<T> clazz, String filename, boolean transposed)
-	{
-
-		List<List<String>> data = CSVHelper.readFile(filename);
-		return factory(clazz, data, transposed);
+	
+	/** Build list of beans from an input csv or xlsx file with individual bean data
+	 *  arranged in rows;
+	 * @param clazz
+	 * @param filename
+	 * @return
+	 */
+	public static <T> List<T> factory(Class<T> clazz, String filename)
+	{ 
+		List<List<String>> data = getData(filename);
+		boolean rows = testRowOrientation(clazz, data);
+		
+		return factory(clazz, data, !rows);
 	}
 
-	public static <T> List<T> xlsxFactory(Class<T> clazz, String filename) { return xlsxFactory(clazz, filename, false); }
-	public static <T> List<T> xlsxFactory(Class<T> clazz, String filename, boolean transposed)
+	
+	private static List<List<String>> getData(String filename)
 	{
-		List<List<String>> data = XLSXHelper.readXLSX(filename);
-		return factory(clazz, data, transposed);
+		if (filename.endsWith("xlsx")) return XLSXHelper.readXLSX(filename);
+		else if (filename.endsWith(".csv")) return CSVHelper.readFile(filename);
+		throw new IllegalArgumentException("Input file " + filename + " does not appear "
+				+ "to be in either the XLSX or CSV format.");
 	}
-
+	
 	/** Create annotated bean instances
 	 * @param clazz 
 	 * @param data data for the beans, the first row must contain the headers.
@@ -84,11 +140,6 @@ public class AnnotatedBeanBuilder
 		if (transposed) data = CSVHelper.transpose(data);
 		List<Field> ff = getAnnotatedFields(clazz);
 		List<String> headers = data.get(0);
-
-		/* Headers in the data that don't match a field in clazz are ignored. */
-		//		if (ff.size() != headers.size()) 
-		//			throw new IllegalArgumentException("The input data headers do not "
-		//					+ "match the field names for type " + clazz.getSimpleName());
 
 		List<String> row;
 		List<T> out = new ArrayList<>();
@@ -184,8 +235,7 @@ public class AnnotatedBeanBuilder
 	/** Random bool convenience generator.  Uses Java Random - not reseedable. */
 	public static boolean randBool(double prob) { if (r.nextDouble() < prob) return true; return false; }
 
-
-
+	/** Test that all the annotated fields of two beans are the same. */
 	public static <T> boolean equals(Class<T> clazz, T t1, T t2)
 	{
 		AnnotatedBeanReporter<T> rep = AnnotatedBeanReporter.factory(clazz, "%.4f", ",");

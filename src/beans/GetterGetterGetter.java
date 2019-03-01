@@ -48,7 +48,6 @@ public class GetterGetterGetter
 	 * @return
 	 */
 	public static <T, R> List<StringValGetter<T>>
-//	public static <T extends AnnotatedCSVBean, R> List<StringValGetter<T>>
 	stringValGetterGetter(Class<T> t, List<Field> ff, String dblFmt)
 	{
 		List<StringValGetter<T>> out = new ArrayList<>();
@@ -65,7 +64,6 @@ public class GetterGetterGetter
 	 * @return
 	 */
 	public static <T, R> StringValGetter<T>
-//	public static <T extends AnnotatedCSVBean, R> StringValGetter<T>
 	stringValGetterGetter(Class<T> t, Field f, String dblFmt)
 	{
 		String type = f.getType().getSimpleName();
