@@ -66,7 +66,7 @@ public class AnnotatedBeanBuilder
 		List<Field> ff = getAnnotatedFields(clazz);
 		List<String> fieldNames = new ArrayList<>();
 		for (Field f : ff) fieldNames.add(f.getName());
-		
+
 		boolean test = true;
 		/* Test row orientation */
 		List<String> row = data.get(0);
@@ -105,8 +105,8 @@ public class AnnotatedBeanBuilder
 	}
 
 
-	
-	
+
+
 	/** Build list of beans from an input csv or xlsx file with individual bean data
 	 *  arranged in rows;
 	 * @param clazz
@@ -117,11 +117,11 @@ public class AnnotatedBeanBuilder
 	{ 
 		List<List<String>> data = getData(filename);
 		boolean rows = testRowOrientation(clazz, data);
-		
+
 		return factory(clazz, data, !rows);
 	}
 
-	
+
 	private static List<List<String>> getData(String filename)
 	{
 		if (filename.endsWith("xlsx")) return XLSXHelper.readXLSX(filename);
@@ -129,7 +129,7 @@ public class AnnotatedBeanBuilder
 		throw new IllegalArgumentException("Input file " + filename + " does not appear "
 				+ "to be in either the XLSX or CSV format.");
 	}
-	
+
 	/** Create annotated bean instances
 	 * @param clazz 
 	 * @param data data for the beans, the first row must contain the headers.
@@ -148,25 +148,29 @@ public class AnnotatedBeanBuilder
 		{
 			for (int r = 1; r < data.size(); r++)
 			{
-				row = data.get(r);
-				o = clazz.newInstance();
-				for (int i = 0; i < ff.size(); i++) 
-				{
-					Field f = ff.get(i);
-					String name = f.getName();
-					int whichColumn = headers.indexOf(name);
+				try {
 
-					if (whichColumn >= 0)
+					row = data.get(r);
+					o = clazz.newInstance();
+					for (int i = 0; i < ff.size(); i++) 
 					{
-						String val = row.get(whichColumn);
-						setVal(f, val, o);
+						Field f = ff.get(i);
+						String name = f.getName();
+						int whichColumn = headers.indexOf(name);
+
+						if (whichColumn >= 0)
+						{
+							String val = row.get(whichColumn);
+							setVal(f, val, o);
+						}
 					}
+					out.add(o);
 				}
-				out.add(o);
+				catch(NumberFormatException e) {}
+				catch(IllegalArgumentException e) {}
 			}
-		}
-		catch (InstantiationException | IllegalAccessException e) 
-		{e.printStackTrace();}
+		} 
+		catch (InstantiationException | IllegalAccessException e) {}
 
 		return out;
 	}
@@ -222,7 +226,9 @@ public class AnnotatedBeanBuilder
 				default: throw new IllegalArgumentException("Input value for field of type " 
 						+ shortName + " could not be parsed");
 				}
-			} catch (IllegalArgumentException | IllegalAccessException e) {	e.printStackTrace();}
+			} 
+			catch (NumberFormatException e) {throw e;}
+			catch (IllegalArgumentException | IllegalAccessException e) {	e.printStackTrace();}
 		}
 	}
 
