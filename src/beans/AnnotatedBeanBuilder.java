@@ -22,7 +22,8 @@ public class AnnotatedBeanBuilder
 	private static Random r = new Random();
 
 	/**  
-	 * @param c
+	 * @param c bean class
+	 * @param <T> bean type
 	 * @return all the fields containing the @FieldColumn annotation
 	 */
 	public static <T> List<Field> getAnnotatedFields(Class<T> c)
@@ -36,12 +37,12 @@ public class AnnotatedBeanBuilder
 
 	/** Parse an integer to a boolean value, in the style of R
 	 * @param i if i is greater than zero returns true, false otherwise
-	 * @return
+	 * @return i if i is greater than zero returns true, false otherwise
 	 */
 	static boolean parseBool(int i) { if (i > 0) return true; return false; }
 
 	/** Parse a string to a boolean value
-	 * @param s 
+	 * @param s string to parse
 	 * @return matches {"true", "t", "1"} to true and {"false", "f", "0"} to false.   
 	 */
 	private static boolean parseBool(String s)
@@ -57,8 +58,9 @@ public class AnnotatedBeanBuilder
 	}
 
 	/** Simple check that input data contains entries for all the annotated fields.
-	 * @param clazz
-	 * @param data
+	 * @param clazz class of bean
+	 * @param data	input data rows
+	 * @param <T> bean type
 	 * @return true = data oriented in rows, false = data oriented in columns
 	 */
 	private static <T> boolean testRowOrientation(Class<T> clazz, List<List<String>> data)
@@ -104,14 +106,12 @@ public class AnnotatedBeanBuilder
 				+ "file contains headers corresponding to all the annotated fields in your bean");
 	}
 
-
-
-
 	/** Build list of beans from an input csv or xlsx file with individual bean data
 	 *  arranged in rows;
-	 * @param clazz
-	 * @param filename
-	 * @return
+	 * @param clazz class of bean
+	 * @param filename name of input file
+	 * @param <T> bean type
+	 * @return list of bean objects
 	 */
 	public static <T> List<T> factory(Class<T> clazz, String filename)
 	{ 
@@ -121,7 +121,11 @@ public class AnnotatedBeanBuilder
 		return factory(clazz, data, !rows);
 	}
 
-
+	/**
+	 * 
+	 * @param filename data file
+	 * @return data rows
+	 */
 	private static List<List<String>> getData(String filename)
 	{
 		if (filename.endsWith("xlsx")) return XLSXHelper.readXLSX(filename);
@@ -131,9 +135,10 @@ public class AnnotatedBeanBuilder
 	}
 
 	/** Create annotated bean instances
-	 * @param clazz 
+	 * @param clazz class of bean 
+	 * @param <T> bean type
 	 * @param data data for the beans, the first row must contain the headers.
-	 * @return
+	 * @return list of bean objects
 	 */
 	public static <T> List<T> factory(Class<T> clazz, List<List<String>> data, boolean transposed)
 	{
@@ -175,7 +180,13 @@ public class AnnotatedBeanBuilder
 		return out;
 	}
 
-	/** Build a bean instance with randomized values for the annotated fields. */
+	/** Build a bean instance with randomized values for the annotated fields. 
+	 * 
+	 * @param clazz bean class
+	 * @param n number of beans to make
+	 * @param <T> bean type
+	 * @return list of beans
+	 */
 	public static <T> List<T> randomFactory(Class<T> clazz, int n)
 	{
 		List<T> l = new ArrayList<>();
@@ -183,7 +194,12 @@ public class AnnotatedBeanBuilder
 		return l;
 	}
 
-	/** Build a list of bean instances with randomized values for the annotated fields. */
+	/** Build a list of bean instances with randomized values for the annotated fields. 
+	 * 
+	 * @param clazz bean class
+ 	 * @param <T> bean type
+	 * @return list of beans
+	 */
 	public static <T> T randomFactory(Class<T> clazz)
 	{
 		List<Field> ff = getAnnotatedFields(clazz);
@@ -205,7 +221,13 @@ public class AnnotatedBeanBuilder
 		return o;
 	}
 
-	/** Set the value of the field to the (appropriately casted) value. */
+	/** Set the value of the field to the (appropriately casted) value. 
+	 * 
+	 * @param f annotated field
+	 * @param val value to set
+	 * @param o bean
+	 * @param <T> bean type
+	 */
 	private static <T> void setVal(Field f, String val, T o)
 	{
 		if (f.isAnnotationPresent(FieldColumn.class))
@@ -232,16 +254,42 @@ public class AnnotatedBeanBuilder
 		}
 	}
 
-	/** Random int convenience generator.  Uses Java Random - not reseedable. */
+	/** Random int convenience generator.  Uses Java Random - not reseedable. 
+	 * 
+	 * @param min min value
+	 * @param max max value
+	 * @return random value
+	 */
 	public static int     randInt(int min, int max) {return r.nextInt(max - min) + min; }
-	/** Random double convenience generator.  Uses Java Random - not reseedable. */
+	/** Random double convenience generator.  Uses Java Random - not reseedable. 
+	 * 
+	 * @param min min value
+	 * @param max max value
+	 * @return random double
+	 */
 	public static double  randDouble(double min, double max) { return (max - min) * r.nextDouble() + min; }
-	/** Random char convenience generator.  Uses Java Random - not reseedable. */
+	/** Random char convenience generator.  Uses Java Random - not reseedable. 
+	 * 
+	 * @param min min char
+	 * @param max highest char
+	 * @return random char
+	 */
 	public static char    randChar(char min, char max) { return (char)(randInt(min, max)); }
-	/** Random bool convenience generator.  Uses Java Random - not reseedable. */
+	/** Random bool convenience generator.  Uses Java Random - not reseedable. 
+	 * 
+	 * @param prob probability of true
+	 * @return true/false
+	 */
 	public static boolean randBool(double prob) { if (r.nextDouble() < prob) return true; return false; }
 
-	/** Test that all the annotated fields of two beans are the same. */
+	/** Test that all the annotated fields of two beans are the same. 
+	 * 
+	 * @param clazz class of beans
+	 * @param t1 bean 1
+	 * @param t2 bean 1
+	 * @param <T> type of bean
+	 * @return are they equal?
+	 */
 	public static <T> boolean equals(Class<T> clazz, T t1, T t2)
 	{
 		AnnotatedBeanReporter<T> rep = AnnotatedBeanReporter.factory(clazz, "%.4f", ",");
@@ -259,7 +307,7 @@ public class AnnotatedBeanBuilder
 
 	/** Random generator for primitive or boxed primitive types. 
 	 * 
-	 * @param shortName
+	 * @param shortName short name of type
 	 * @return String representation of the random data. 
 	 */
 	public static String randomString(String shortName)
@@ -285,19 +333,19 @@ public class AnnotatedBeanBuilder
 
 	/** Random String generator 
 	 * 
-	 * @param nChars
-	 * @param min
-	 * @param max
-	 * @return
+	 * @param nChars how long shoudl the string be?
+	 * @param min what is the highest character?
+	 * @param max what is the lowest character
+	 * @return random string
 	 */
 	public static String randomString(int nChars, char min, char max) { return randomString(nChars, min, max, null);}
 	/** Random String generator
 	 *  
-	 * @param nChars
-	 * @param min
-	 * @param max
-	 * @param r
-	 * @return
+	 * @param nChars how long shoudl the string be?
+	 * @param min what is the highest character?
+	 * @param max what is the lowest character
+	 * @param r random generator
+	 * @return random string
 	 */
 	public static String randomString(int nChars, char min, char max, Random r)
 	{

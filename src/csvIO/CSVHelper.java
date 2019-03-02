@@ -29,10 +29,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import beans.AnnotatedBeanReporter;
-import beans.AnnotatedBeanBuilder;
-import beans.TestBean;
-
 /**
  * https://raw.githubusercontent.com/agilepro/mendocino/master/src/com/purplehillsbooks/streams/CSVHelper.java
  * 
@@ -40,7 +36,7 @@ import beans.TestBean;
  * Converts list of String values into a line of a CSV file parseLine: read a
  * line from a LineNumberReader and return the list of Strings
  *
- * That should be all you need. Create or open the file & streams yourself from
+ * That should be all you need. Create or open the file and streams yourself from
  * whatever source you need to read from.. Everything in this class works on
  * characters, and not bytes.
  */
@@ -49,6 +45,10 @@ public class CSVHelper {
 	/**
 	 * Just a convenience method that iterates teh rows of a table and outputs
 	 * to a writer which is presumably a CSV file.
+	 * 
+	 * @param w writer
+	 * @param table data rows
+	 * @throws Exception general exception
 	 */
 	public static void writeTable(Writer w, List<List<String>> table) throws Exception {
 		for (int i=0; i<table.size(); i++) {
@@ -59,6 +59,10 @@ public class CSVHelper {
 
 	/**
 	 * Write a single row of a CSV table, all values are quoted
+	 * 
+	 * @param w writer
+	 * @param values row entries
+	 * @throws Exception general exception general exception
 	 */
 	public static void writeLine(Writer w, List<String> values) throws Exception {
 		boolean firstVal = true;
@@ -81,8 +85,9 @@ public class CSVHelper {
 	}
 
 	/**
-	 * returns a row of values as a list
-	 * returns null if you are past the end of the line
+	 * @param r reader
+	 * @return returns a row of values as a list. Returns null if you are past the end of the line
+	 * @throws Exception general exception
 	 */
 	public static List<String> parseLine(Reader r) throws Exception {
 		int ch = r.read();
@@ -142,6 +147,11 @@ public class CSVHelper {
 		return store;
 	}
 
+	/**
+	 * 
+	 * @param filename data file
+	 * @return list of data rows
+	 */
 	public static List<List<String>> readFile(String filename)
 	{
 		BufferedReader br = null;
@@ -165,6 +175,11 @@ public class CSVHelper {
 		return out;
 	}
 
+	/**
+	 * 
+	 * @param data data rows
+	 * @param filename output file
+	 */
 	public static void writeFile(List<List<String>> data, String filename)
 	{
 		BufferedWriter bw = null;
@@ -187,8 +202,8 @@ public class CSVHelper {
 
 	/** Convenience method to transpose the contents of a CSV file.
 	 * @author michaelfrancenelson
-	 * @param in
-	 * @return
+	 * @param in input data rows
+	 * @return transposed data
 	 */
 	public static List<List<String>> transpose(List<List<String>> in)
 	{
@@ -215,23 +230,23 @@ public class CSVHelper {
 		return out;
 	}
 
-	public static void main(String[] args) {
-		String filename = "testOutput/annotatedTestBean.csv";
-		String filenameTr = "testOutput/annotatedTestBeanTransposed.csv";
-
-		List<List<String>> ll = readFile(filename);
-
-		List<TestBean> lb = AnnotatedBeanBuilder.factory(TestBean.class, ll, false);
-
-		AnnotatedBeanReporter<TestBean> rep =
-				AnnotatedBeanReporter.factory(TestBean.class, "%.4f", ",", "field1", "field2");
-		for (TestBean b : lb)	rep.consoleReport(b);
-
-		List<List<String>> lt = transpose(readFile(filename));
-
-		System.out.println("old row count: " + ll.size() + ", old column count: " + ll.get(0).size());
-		System.out.println("new row count: " + lt.size() + ", new column count: " + lt.get(0).size());
-
-		writeFile(lt, filenameTr);
-	}
+//	public static void main(String[] args) {
+//		String filename = "testOutput/annotatedTestBean.csv";
+//		String filenameTr = "testOutput/annotatedTestBeanTransposed.csv";
+//
+//		List<List<String>> ll = readFile(filename);
+//
+//		List<TestBean> lb = AnnotatedBeanBuilder.factory(TestBean.class, ll, false);
+//
+//		AnnotatedBeanReporter<TestBean> rep =
+//				AnnotatedBeanReporter.factory(TestBean.class, "%.4f", ",", "field1", "field2");
+//		for (TestBean b : lb)	rep.consoleReport(b);
+//
+//		List<List<String>> lt = transpose(readFile(filename));
+//
+//		System.out.println("old row count: " + ll.size() + ", old column count: " + ll.get(0).size());
+//		System.out.println("new row count: " + lt.size() + ", new column count: " + lt.get(0).size());
+//
+//		writeFile(lt, filenameTr);
+//	}
 }

@@ -28,8 +28,8 @@ public class GetterGetterGetter
 
 	/** Retrieve the names of the fields for annotated bean IO
 	 * 
-	 * @param ff
-	 * @return
+	 * @param ff  list of annotated fields
+	 * @return a getter names of all the annotated fields
 	 */
 	public static List<String> columnHeaderGetter(List<Field> ff)
 	{
@@ -42,12 +42,12 @@ public class GetterGetterGetter
 	/** Get a list of getters for string representations
 	 *  of all the bean's fields. 
 	 * 
-	 * @param t
-	 * @param ff
-	 * @param dblFmt
-	 * @return
+	 * @param ff list of annotated fields
+	 * @param dblFmt how to print double values
+	 * @param <T> type of bean
+	 * @return a getter
 	 */
-	public static <T, R> List<StringValGetter<T>>
+	public static <T> List<StringValGetter<T>>
 	stringValGetterGetter(Class<T> t, List<Field> ff, String dblFmt)
 	{
 		List<StringValGetter<T>> out = new ArrayList<>();
@@ -58,12 +58,13 @@ public class GetterGetterGetter
 	/** Create a getter function to return a string representation 
 	 *  of an annotated bean's field
 	 * 
-	 * @param t
-	 * @param f
-	 * @param dblFmt
-	 * @return
+	 * @param t annotated bean object
+	 * @param f annotated field
+	 * @param dblFmt how to print double values
+	 * @param <T> type of bean
+	 * @return a getter
 	 */
-	public static <T, R> StringValGetter<T>
+	public static <T> StringValGetter<T>
 	stringValGetterGetter(Class<T> t, Field f, String dblFmt)
 	{
 		String type = f.getType().getSimpleName();
@@ -140,9 +141,10 @@ public class GetterGetterGetter
 
 	/** build a getter for a primitive int field
 	 * 
-	 * @param t
-	 * @param f
-	 * @return
+	 * @param t annotated bean object
+	 * @param f annotated field	 
+	 * @param <T> type of bean
+	 * @return a getter
 	 */
 	public static <T> IntGetter<T> 
 	intGetterGetter(Class<T> t, Field f)
@@ -158,9 +160,10 @@ public class GetterGetterGetter
 
 	/** build a getter for a primitive double field
 	 * 
-	 * @param t
-	 * @param f
-	 * @return
+	 * @param t annotated bean object
+	 * @param f annotated field
+	 * @param <T> type of bean
+	 * @return a getter
 	 */
 	public static <T> DoubleGetter<T> 
 	doubleGetterGetter(Class<T> t, Field f)
@@ -176,9 +179,10 @@ public class GetterGetterGetter
 
 	/** build a getter for a primitive boolean field
 	 * 
-	 * @param t
-	 * @param f
-	 * @return
+	 * @param t annotated bean object
+	 * @param f annotated field
+	 * @param <T> type of bean
+	 * @return a getter
 	 */
 	public static <T> BooleanGetter<T> 
 	booleanGetterGetter(Class<T> t, Field f)
@@ -194,9 +198,10 @@ public class GetterGetterGetter
 
 	/** build a getter for a String field
 	 * 
-	 * @param t
-	 * @param f
-	 * @return
+	 * @param t annotated bean object
+	 * @param f annotated field
+	 * @param <T> type of bean
+	 * @return a getter
 	 */
 	public static <T> StringGetter<T> 
 	stringGetterGetter(Class<T> t, Field f)
@@ -212,9 +217,10 @@ public class GetterGetterGetter
 
 	/** build a getter for a general field (to be cast later)
 	 * 
-	 * @param t
-	 * @param f
-	 * @return
+	 * @param t annotated bean object
+	 * @param f annotated field
+	 * @param <T> type of bean
+	 * @return a getter
 	 */
 	public static <T> ObjGetter<T> 
 	objectGetterGetter(Class<T> t, Field f)
@@ -230,9 +236,10 @@ public class GetterGetterGetter
 
 	/** build a getter for a boxed double field
 	 * 
-	 * @param t
-	 * @param f
-	 * @return
+	 * @param t annotated bean object
+	 * @param f annotated field
+	 * @param <T> type of bean
+	 * @return a getter
 	 */
 	public static <T> BoxedDoubleGetter<T> 
 	boxedDoubleGetterGetter(Class<T> t, Field f)
@@ -243,9 +250,10 @@ public class GetterGetterGetter
 
 	/** Build a getter for a boxed int field
 	 * 
-	 * @param t
-	 * @param f
-	 * @return
+	 * @param t annotated bean object
+	 * @param f annotated field
+	 * @param <T> type of bean
+	 * @return a getter
 	 */
 	public static <T> BoxedIntGetter<T> 
 	boxedIntGetterGetter(Class<T> t, Field f)
@@ -256,9 +264,10 @@ public class GetterGetterGetter
 
 	/** Build a getter for a boxed boolean field
 	 * 
-	 * @param t
-	 * @param f
-	 * @return
+	 * @param t annotated bean object
+	 * @param f annotated field
+	 * @param <T> type of bean
+	 * @return a getter
 	 */
 	public static <T> BoxedBooleanGetter<T> 
 	boxedBooleanGetterGetter(Class<T> t, Field f)

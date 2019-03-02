@@ -1,7 +1,5 @@
 package xlsx;
 
-import static org.junit.Assert.fail;
-
 import java.util.List;
 
 import org.junit.Test;
@@ -36,6 +34,6 @@ public class XLSXUtilTest {
     	
 //    	for (TestBean tb : lb) rep.consoleReport(tb); 
 		
-		fail("Not yet implemented");
+//		fail("Not yet implemented");
 	}
 }

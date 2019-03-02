@@ -15,7 +15,7 @@ import beans.GetterGetterGetter.StringValGetter;
  * 
  * @author michaelfrancenelson
  *
- * @param <T>
+ * @param <T> annotated bean type to report
  */
 public class AnnotatedBeanReporter<T>
 {
@@ -25,10 +25,10 @@ public class AnnotatedBeanReporter<T>
 	private List<String> headers;
 	private String[] additionalColumnNames;
 	private ByteArrayOutputStream bStreamOut;
-	
+
 	/**
 	 * 
-	 * @param t
+	 * @param t bean object
 	 * @return a list of string representations of the bean's annotated fields
 	 */
 	public List<String> stringValReport(T t)
@@ -38,10 +38,13 @@ public class AnnotatedBeanReporter<T>
 			l.add(g.get(t));
 		return l;
 	}
-	
-	
+
+
 	/**
 	 * 
+	 * @param clazz type of bean
+	 * @param dblFmt how to print double values
+	 * @param <T> annotated bean type to report
 	 * @return a list of string representations of the bean's annotated fields
 	 */
 	public static <T> List<String> staticStringValReport(Class<T> clazz, String dblFmt)
@@ -49,33 +52,32 @@ public class AnnotatedBeanReporter<T>
 		List<StringValGetter<T>> getters;
 		List<Field> fields = AnnotatedBeanBuilder.getAnnotatedFields(clazz);
 
-		
 		List<Field> staticFields = new ArrayList<>();
 		for (Field f : fields)
 		{
-			   if (java.lang.reflect.Modifier.isStatic(f.getModifiers())) staticFields.add(f);  
+			if (java.lang.reflect.Modifier.isStatic(f.getModifiers())) staticFields.add(f);  
 		}
-		
+
 		getters = GetterGetterGetter.stringValGetterGetter(clazz, fields, dblFmt);
-		
+
 		List<String> l = new ArrayList<>(getters.size());
-		
+
 		T t = null;
 		try {
 			t = clazz.newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		
+
 		for (StringValGetter<T> g : getters) 
 			l.add(g.get(t));
-		
+
 		return l;
 	}
 
 	/** Print the bean's annotated fields to the console
 	 * 
-	 * @param t
+	 * @param t bean object
 	 */
 	public void consoleReport(T t)
 	{
@@ -87,22 +89,25 @@ public class AnnotatedBeanReporter<T>
 		}
 		System.out.println();
 	}
-	
+
 	/**
-	 * 
 	 * @return a formatted string with the names of the bean's annotated fields
 	 */
 	public String headerReportLine() { return concat(headers, sep, (Object[]) additionalColumnNames); }
 	/** 
 	 * 
-	 * @param t
-	 * @param additionalColumns
+	 * @param t bean object
+	 * @param additionalColumns additional items for the report
 	 * @return a formatted string with string representations of the bean's annotated fields
 	 */
 	public String stringReportLine(T t, Object... additionalColumns)
 	{ return concat(stringValReport(t), sep, additionalColumns); }
 
-	/** Add a bean to the report. */
+	/** Add a bean to the report. 
+	 * 
+	 * @param item bean to add 
+	 * @param additionalColumns additional items for the report
+	 */
 	public void appendToReport(T item, Object... additionalColumns)
 	{
 		try {
@@ -114,8 +119,8 @@ public class AnnotatedBeanReporter<T>
 
 	/** Add the current values of the annotated static variables to the report.
 	 * 
-	 * @param clazz
-	 * @param additionalColumns
+	 * @param clazz class of bean
+	 * @param additionalColumns additional items for the report
 	 */
 	public void appendStaticToReport(Class<T> clazz, Object... additionalColumns)
 	{
@@ -127,17 +132,21 @@ public class AnnotatedBeanReporter<T>
 		}
 		catch (IOException e) { e.printStackTrace(); }	
 	}
-	
-	/** Add a list of beans to the report. */
+
+	/** Add a list of beans to the report. 
+	 * 
+	 * @param list bean list
+	 * @param extraColumns extra items for the report
+	 */
 	public void appendListToReport(List<T> list, Object... extraColumns)
 	{ for (T t : list) appendToReport(t, extraColumns); }
-	
+
 	/** Format input strings for appending to the report
 	 * 
-	 * @param l
-	 * @param sep
-	 * @param additionalCols
-	 * @return
+	 * @param l input strings
+	 * @param sep separator (usually a comma)
+	 * @param additionalCols additional items for the report
+	 * @return concatenated string suitable for the report
 	 */
 	public static String concat(List<String> l, String sep, Object... additionalCols)
 	{
@@ -155,8 +164,11 @@ public class AnnotatedBeanReporter<T>
 		}
 		return out;
 	}
-	
-	/** Write the data to file and close the reporter. */
+
+	/** Write the data to file and close the reporter.
+	 * 
+	 * @param filename input file
+	 */
 	public void writeCSV(String filename)
 	{
 		try {
@@ -170,11 +182,12 @@ public class AnnotatedBeanReporter<T>
 
 	/** Build a reporter for the annotated bean type T
 	 * 
-	 * @param clazz
-	 * @param dblFmt
-	 * @param sep
-	 * @param additionalColumns
-	 * @return
+	 * @param clazz type of bean
+	 * @param dblFmt how to print double values
+	 * @param sep usually a comma
+	 * @param additionalColumns extra items for the report
+	 * @param <T> annotated bean type to report
+	 * @return reporter for type clazz
 	 */
 	public static <T> AnnotatedBeanReporter<T> 
 	factory(Class<T> clazz, String dblFmt, String sep, String... additionalColumns)

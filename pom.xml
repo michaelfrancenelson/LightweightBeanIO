@@ -16,7 +16,9 @@
 		<maven.compiler.plugin.version>3.8.0</maven.compiler.plugin.version>
 		<jdk.version>1.8</jdk.version>
 
-		<skipTests>true</skipTests>
+		<junit.version>4.12</junit.version>
+
+		<skip.tests>false</skip.tests>
 		
 	</properties>
 
@@ -30,31 +32,48 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven.compiler.plugin.version}</version>
 				<configuration>
-					<skipTests>true</skipTests>
+					<skipTests>${skip.tests}</skipTests>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
 				</configuration>
 			</plugin>
 
 			<plugin>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>${maven.deploy.plugin.version}</version>
-				<configuration>
-					<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
-					<skipTests>true</skipTests>
-				</configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 
 		</plugins>
 
 	</build>
 
-	<distributionManagement>
-		<repository>
-			<id>internal.repo</id>
-			<name>Temporary Staging Repository</name>
-			<url>file://${project.build.directory}/mvn-repo</url>
-		</repository>
-	</distributionManagement>
-
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 </project>

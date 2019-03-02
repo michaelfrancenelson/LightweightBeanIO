@@ -1,7 +1,5 @@
 package csvIO;
 
-import static org.junit.Assert.*;
-
 import java.util.List;
 
 import org.junit.Test;
@@ -33,7 +31,7 @@ public class CSVHelperTest {
 		
 		CSVHelper.writeFile(lt, filenameTr);
 		
-		fail("Not yet implemented");
+//		fail("Not yet implemented");
 	}
 
 }
