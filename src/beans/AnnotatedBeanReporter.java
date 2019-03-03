@@ -26,6 +26,53 @@ public class AnnotatedBeanReporter<T>
 	private String[] additionalColumnNames;
 	private ByteArrayOutputStream bStreamOut;
 
+
+	public static <T> String getStringVal(Class<T> clazz, T t, Field f,
+			int naInt, double naDouble, String naString, boolean naBoolean, char naChar) throws IllegalArgumentException, IllegalAccessException
+	{
+		f.setAccessible(true);
+
+		String type = f.getType().getSimpleName();
+
+		switch(type)
+		{
+		case("int"):     { return String.format("%d", f.getInt(t)); }
+		case("double"):  { return String.format("%f", f.getDouble(t)); }
+		case("boolean"): { return Boolean.toString(f.getBoolean(t)); }
+
+		case("String"):  { return f.get(t).toString(); }
+		case("char"):    { return String.valueOf(f.getChar(t)); }
+
+		case("Integer"): { return String.format("%d", (Integer) f.get(t)); }
+		case("Double"):  { return String.format("%f", (Double) f.get(t)); }
+		case("Boolean"): { return Boolean.toString((Boolean) f.get(t)); }
+		default:         { return f.get(t).toString(); }
+		}
+	}
+	
+	static <T> boolean isNA(Class<T> clazz, T t, Field f,
+			int naInt, double naDouble, String naString, 
+			char naChar) 
+					throws IllegalArgumentException, IllegalAccessException
+	{
+		String type = f.getType().getSimpleName();
+		switch(type)
+		{
+		case("int"):     { return  f.getInt(t) == naInt; }
+		case("double"):  { return f.getDouble(t) == naDouble; }
+		/* It doesn't really make sense to check this for the primitive boolean type... */
+		//		case("boolean"): { return f.getBoolean(t) == naBoolean;; }
+
+		case("String"):  { return f.get(t).toString().equals(naString); }
+		case("char"):    { return f.getChar(t) == naChar; }
+
+		case("Integer"): { return (Integer) f.get(t) == naInt; }
+		case("Double"):  { return (Double) f.get(t) == naDouble; }
+		case("Boolean"): { return (Boolean) f.get(t) == null; }
+		default:         { return false; }
+		}
+	}
+
 	/**
 	 * 
 	 * @param t bean object
@@ -38,7 +85,6 @@ public class AnnotatedBeanReporter<T>
 			l.add(g.get(t));
 		return l;
 	}
-
 
 	/**
 	 * 
@@ -157,7 +203,6 @@ public class AnnotatedBeanReporter<T>
 		int i = 0;
 		if (nElements > 0)
 		{
-
 			if (nHeaders > 0) {out += l.get(0); i++; }
 			if (nHeaders > 1) while(i < nHeaders) { out += sep + l.get(i); i++; }
 			if (nExtra > 0)	for (Object s : additionalCols)	out += sep + s;

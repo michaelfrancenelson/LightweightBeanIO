@@ -206,14 +206,30 @@ public class CSVHelper {
 	 * @return transposed data
 	 */
 	public static List<List<String>> transpose(List<List<String>> in)
+	{ return transpose(in, false); }
+	
+	public static List<List<String>> transpose(List<List<String>> in, boolean trim)
 	{
 		List<List<String>> out = new ArrayList<List<String>>();
 
 		/* Check that all the rows are the same size.*/
 		int length = in.get(0).size();
+		
+		/* if filling in for unequal rows, check for longest row: */
+		if (trim)
+		{
+			for (List<String> l : in) 
+			{
+				int n = l.size();
+				if (n > length) length = n;
+			}
+		}
+		else 
+		{
 		for (List<String> l : in) if (l.size() != length) 
 			throw new IllegalArgumentException("All rows are not the same length.");
-
+		}
+		
 		int nNewRows = length;
 		int nNewColumns = in.size();
 
@@ -222,7 +238,10 @@ public class CSVHelper {
 		for (int i = 0; i < nNewColumns; i++)
 		{
 			List<String> oldRow = in.get(i);
-			for (int j = 0; j < nNewRows; j++)
+			if (oldRow.size() <= nNewRows)
+//				if (oldRow.size() == nNewRows)
+			for (int j = 0; j < oldRow.size(); j++)
+//				for (int j = 0; j < nNewRows; j++)
 			{
 				out.get(j).add(oldRow.get(j));
 			}

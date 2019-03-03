@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import beans.AnnotatedBeanBuilder;
 import beans.AnnotatedBeanReporter;
-import beans.TestBean;
+import beans.sampleBeans.SimpleBean;
 
 public class CSVHelperTest {
 
@@ -18,11 +18,11 @@ public class CSVHelperTest {
 		String filenameTr = "testData/annotatedTestBeanTransposed.csv";
 
 		List<List<String>> ll = CSVHelper.readFile(filename);
-		List<TestBean> lb = AnnotatedBeanBuilder.factory(TestBean.class, ll, false);
+		List<SimpleBean> lb = AnnotatedBeanBuilder.factory(SimpleBean.class, ll, false);
 		
-		AnnotatedBeanReporter<TestBean> rep =
-				AnnotatedBeanReporter.factory(TestBean.class, "%.4f", ",", "field1", "field2");
-		for (TestBean b : lb)	rep.consoleReport(b);
+		AnnotatedBeanReporter<SimpleBean> rep =
+				AnnotatedBeanReporter.factory(SimpleBean.class, "%.4f", ",", "field1", "field2");
+		for (SimpleBean b : lb)	rep.consoleReport(b);
 		
 		List<List<String>> lt = CSVHelper.transpose(CSVHelper.readFile(filename));
 		

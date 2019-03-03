@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import beans.AnnotatedBeanBuilder;
 import beans.AnnotatedBeanReporter;
-import beans.TestBean;
+import beans.sampleBeans.SimpleBean;
 
 public class XLSXUtilTest {
 
@@ -20,8 +20,8 @@ public class XLSXUtilTest {
     	List<List<String>> lll = 
     	XLSXHelper.readXLSX(filename);
     	
-		AnnotatedBeanReporter<TestBean> rep = AnnotatedBeanReporter.factory(TestBean.class, "%.4f", ",", "field1", "field2");
-    	List<TestBean> lb = AnnotatedBeanBuilder.factory(TestBean.class, lll, false);
+		AnnotatedBeanReporter<SimpleBean> rep = AnnotatedBeanReporter.factory(SimpleBean.class, "%.4f", ",", "field1", "field2");
+    	List<SimpleBean> lb = AnnotatedBeanBuilder.factory(SimpleBean.class, lll, false);
     
     	rep.appendListToReport(lb);
     	
