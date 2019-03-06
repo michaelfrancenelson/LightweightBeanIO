@@ -14,7 +14,7 @@ import csvIO.CSVHelper;
 import xlsx.XLSXHelper;
 
 public class AnnotatedBeanBuilder {
-//	static Logger logger = LoggerFactory.getLogger(AnnotatedBeanBuilder.class);
+	//	static Logger logger = LoggerFactory.getLogger(AnnotatedBeanBuilder.class);
 
 	/**
 	 * Marker to show which of the bean's fields are to read or reported
@@ -145,7 +145,7 @@ public class AnnotatedBeanBuilder {
 				try {
 
 					row = data.get(r);
-					
+
 					o = clazz.newInstance();
 					for (int i = 0; i < ff.size(); i++) {
 						Field f = ff.get(i);
@@ -218,17 +218,25 @@ public class AnnotatedBeanBuilder {
 			fieldNames.add(f.getName());
 
 		boolean test = true;
+
+
+		List<String> absentFromRow = new ArrayList<>();
+		List<String> absentFromCol = new ArrayList<>();
+
+		List<String> presentInRow = new ArrayList<>();
+		List<String> presentInCol = new ArrayList<>();
+
 		/* Test row orientation */
 		List<String> row = data.get(0);
 		for (String f : fieldNames) {
 			if (!row.contains(f)) {
 				test = false;
-				break;
+				absentFromRow.add(f);
 			}
+			else presentInRow.add(f);
 		}
 
-		if (test)
-			return true;
+		if (absentFromRow.size() == 0) return true;
 
 		/* Test for column orientation. */
 		test = true;
@@ -237,18 +245,35 @@ public class AnnotatedBeanBuilder {
 			firstCol.add(l.get(0));
 		}
 
+
+
 		for (String f : fieldNames) {
 			if (!firstCol.contains(f)) {
 				test = false;
-				break;
+				absentFromCol.add(f);
 			}
+			else presentInCol.add(f);
 		}
 
-		if (test)
-			return false;
+		if (absentFromCol.size() == 0) return false;
 
-		throw new IllegalArgumentException("Problem parsing input file.  Make sure that the"
-				+ "file contains headers corresponding to all the annotated fields in your bean");
+
+		String message = "Problem parsing input file. ";
+		if (presentInRow.size() > 1)
+		{
+			message += "File appears to have data oriented in rows. " +
+					"Check for column headings: \n" +
+					AnnotatedBeanReporter.concat(absentFromRow, " ,");
+		}
+		else if (presentInRow.size() > 1)
+		{
+			message += "File appears to have data oriented in columns. " +
+					"Check for row headings: \n" +
+					AnnotatedBeanReporter.concat(absentFromCol, " ,");
+		}
+		else message += " Could not determine orientation of data in input file";
+
+		throw new IllegalArgumentException(message);
 	}
 
 	/**
@@ -266,34 +291,34 @@ public class AnnotatedBeanBuilder {
 				switch (shortName) {
 				case ("int"):
 					f.setInt(o, Integer.parseInt(val));
-					break;
+				break;
 				case ("double"):
 					f.setDouble(o, Double.parseDouble(val));
-					break;
+				break;
 				case ("boolean"):
 					f.setBoolean(o, parseBool(val));
-					break;
+				break;
 				case ("String"):
 					f.set(o, val);
-					break;
+				break;
 				case ("Integer"):
 					f.set(o, (Integer) Integer.parseInt(val));
-					break;
+				break;
 				case ("Double"):
 					f.set(o, (Double) Double.parseDouble(val));
-					break;
+				break;
 				case ("Boolean"):
 					f.set(o, (Boolean) parseBool(val));
-					break;
+				break;
 				case ("char"):
 					f.setChar(o, val.charAt(0));
-					break;
+				break;
 				default:
 					throw new IllegalArgumentException(
 							"Input value for field of type " + shortName + " could not be parsed");
 
 				}
-//				logger.trace("Field " + f.getName() + "(" + shortName + ")" + " set to " + val + ".");
+				//				logger.trace("Field " + f.getName() + "(" + shortName + ")" + " set to " + val + ".");
 			} catch (NumberFormatException e) {
 				throw e;
 			} catch (IllegalArgumentException | IllegalAccessException e) {
@@ -319,7 +344,7 @@ public class AnnotatedBeanBuilder {
 			return false;
 		for (int i = 0; i < r1.size(); i++)
 			if (!(r1.get(i).equals(r2.get(i)))) {
-//				logger.debug(r1.get(i) + " != " + r2.get(i));
+				//				logger.debug(r1.get(i) + " != " + r2.get(i));
 				return false;
 			}
 		return true;

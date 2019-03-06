@@ -14,7 +14,7 @@ public class GetterGetterGetter
 	@FunctionalInterface interface StringValGetter<T> { String get(T t);};
 
 	@FunctionalInterface interface IntGetter <T> { int get(T obj); }
-	@FunctionalInterface interface DoubleGetter<T> { Double get(T obj); }
+	@FunctionalInterface interface DoubleGetter<T> { double get(T obj); }
 	@FunctionalInterface interface BooleanGetter<T> { boolean get(T obj); }
 
 	@FunctionalInterface interface StringGetter<T> { String get(T obj); }
