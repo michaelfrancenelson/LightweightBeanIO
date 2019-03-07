@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import beans.AnnotatedBeanBuilder.FieldColumn;
 import beans.GetterGetterGetter.StringValGetter;
 
 /** Utilities for recording the states of annotated beans 
@@ -49,13 +50,13 @@ public class AnnotatedBeanReporter<T>
 		default:         { return f.get(t).toString(); }
 		}
 	}
-	
+
 	static <T> boolean isNA(Class<T> clazz, T t, Field f,
-			int naInt, double naDouble, String naString, 
-			char naChar) 
+			int naInt, double naDouble, String naString, char naChar) 
 					throws IllegalArgumentException, IllegalAccessException
 	{
 		String type = f.getType().getSimpleName();
+
 		switch(type)
 		{
 		case("int"):     { return  f.getInt(t) == naInt; }
@@ -96,7 +97,7 @@ public class AnnotatedBeanReporter<T>
 	public static <T> List<String> staticStringValReport(Class<T> clazz, String dblFmt)
 	{
 		List<StringValGetter<T>> getters;
-		List<Field> fields = AnnotatedBeanBuilder.getAnnotatedFields(clazz);
+		List<Field> fields = AnnotatedBeanBuilder.getAnnotatedFields(clazz, FieldColumn.class);
 
 		List<Field> staticFields = new ArrayList<>();
 		for (Field f : fields)
@@ -239,7 +240,7 @@ public class AnnotatedBeanReporter<T>
 	{
 		AnnotatedBeanReporter<T> rep = new AnnotatedBeanReporter<>();
 		rep.clazz = clazz;
-		List<Field> fields = AnnotatedBeanBuilder.getAnnotatedFields(rep.clazz);
+		List<Field> fields = AnnotatedBeanBuilder.getAnnotatedFields(rep.clazz, FieldColumn.class);
 		rep.dblFmt = dblFmt;
 		rep.sep = sep;
 		rep.getters = GetterGetterGetter.stringValGetterGetter(

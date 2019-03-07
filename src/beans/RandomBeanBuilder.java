@@ -31,7 +31,7 @@ public class RandomBeanBuilder extends AnnotatedBeanBuilder
 	 */
 	public static <T> T randomFactory(Class<T> clazz)
 	{
-		List<Field> ff = getAnnotatedFields(clazz);
+		List<Field> ff = getAnnotatedFields(clazz, FieldColumn.class);
 		T o = null;
 		try 
 		{

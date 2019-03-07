@@ -63,20 +63,19 @@ public class AnnotatedBeanBuilder {
 		return factory(clazz, data, !rows, trim);
 	}
 
-	/**
-	 * @param clazz bean class
-	 * @param       <T> bean type
-	 * @return all the fields containing the @FieldColumn annotation
-	 */
-	public static <T> List<Field> getAnnotatedFields(Class<T> clazz) {
-		List<Field> ll = new ArrayList<>();
-		for (Field f : clazz.getDeclaredFields()) {
-			f.setAccessible(true);
-			if (f.isAnnotationPresent(FieldColumn.class))
-				ll.add(f);
-		}
-		return ll;
-	}
+//	/**
+//	 * @param clazz bean class
+//	 * @param       <T> bean type
+//	 * @return all the fields containing the @FieldColumn annotation
+//	 */
+//	public static <T> List<Field> getAnnotatedFields(Class<T> clazz) {
+//		List<Field> ll = new ArrayList<>();
+//		for (Field f : clazz.getDeclaredFields()) {
+//			f.setAccessible(true);
+//			if (f.isAnnotationPresent(FieldColumn.class)) ll.add(f);
+//		}
+//		return ll;
+//	}
 
 	/**
 	 * 
@@ -89,8 +88,7 @@ public class AnnotatedBeanBuilder {
 		List<Field> ll = new ArrayList<>();
 		for (Field f : clazz.getDeclaredFields()) {
 			f.setAccessible(true);
-			if (f.isAnnotationPresent(annClazz))
-				ll.add(f);
+			if (f.isAnnotationPresent(annClazz)) ll.add(f);
 		}
 		return ll;
 	}
@@ -130,11 +128,13 @@ public class AnnotatedBeanBuilder {
 	 * @param trim  should incomplete rows be removed?
 	 * @return list of bean objects
 	 */
-	public static <T> List<T> factory(Class<T> clazz, List<List<String>> data,
-			boolean transposed, boolean trim) {
+	public static <T> List<T> factory(
+			Class<T> clazz, List<List<String>> data,
+			boolean transposed, boolean trim) 
+	{
 		if (transposed)
 			data = CSVHelper.transpose(data, trim);
-		List<Field> ff = getAnnotatedFields(clazz);
+		List<Field> ff = getAnnotatedFields(clazz, FieldColumn.class);
 		List<String> headers = data.get(0);
 
 		List<String> row;
@@ -205,6 +205,8 @@ public class AnnotatedBeanBuilder {
 
 	/**
 	 * Simple check that input data contains entries for all the annotated fields.
+	 * Throws an exception if all the field names from clazz are not found in either
+	 * the first row or column of the data.
 	 * 
 	 * @param clazz class of bean
 	 * @param data  input data rows
@@ -212,67 +214,63 @@ public class AnnotatedBeanBuilder {
 	 * @return true = data oriented in rows, false = data oriented in columns
 	 */
 	private static <T> boolean testRowOrientation(Class<T> clazz, List<List<String>> data) {
-		List<Field> ff = getAnnotatedFields(clazz);
+		
+		List<Field> ff = getAnnotatedFields(clazz, FieldColumn.class);
+		
 		List<String> fieldNames = new ArrayList<>();
-		for (Field f : ff)
+		for (Field f : ff) 
+		{
+			System.out.println("BeanBuilder: " + f.getName());
 			fieldNames.add(f.getName());
+		}
+			
 
-		boolean test = true;
+		List<String> absentFromFirstRow = new ArrayList<>();
+		List<String> absentFromFirstCol = new ArrayList<>();
 
-
-		List<String> absentFromRow = new ArrayList<>();
-		List<String> absentFromCol = new ArrayList<>();
-
-		List<String> presentInRow = new ArrayList<>();
-		List<String> presentInCol = new ArrayList<>();
+		List<String> presentInFirstRow = new ArrayList<>();
+		List<String> presentInFirstCol = new ArrayList<>();
 
 		/* Test row orientation */
 		List<String> row = data.get(0);
 		for (String f : fieldNames) {
-			if (!row.contains(f)) {
-				test = false;
-				absentFromRow.add(f);
-			}
-			else presentInRow.add(f);
+			if (!row.contains(f)) absentFromFirstRow.add(f);
+			else presentInFirstRow.add(f);
 		}
 
-		if (absentFromRow.size() == 0) return true;
+		if (absentFromFirstRow.size() == 0) return true;
 
 		/* Test for column orientation. */
-		test = true;
 		List<String> firstCol = new ArrayList<>();
-		for (List<String> l : data) {
-			firstCol.add(l.get(0));
-		}
-
-
+		for (List<String> l : data) { firstCol.add(l.get(0)); }
 
 		for (String f : fieldNames) {
-			if (!firstCol.contains(f)) {
-				test = false;
-				absentFromCol.add(f);
-			}
-			else presentInCol.add(f);
+			if (!firstCol.contains(f)) absentFromFirstCol.add(f); 
+			else presentInFirstCol.add(f);
 		}
 
-		if (absentFromCol.size() == 0) return false;
+		if (absentFromFirstCol.size() == 0) return false;
 
-
+		/* Otherwise there was a parsing issue: */
+		
 		String message = "Problem parsing input file. ";
-		if (presentInRow.size() > 1)
+		if (presentInFirstRow.size() > 1)
 		{
 			message += "File appears to have data oriented in rows. " +
 					"Check for column headings: \n" +
-					AnnotatedBeanReporter.concat(absentFromRow, " ,");
+					AnnotatedBeanReporter.concat(absentFromFirstRow, " ,");
+			throw new IllegalArgumentException(message);
 		}
-		else if (presentInRow.size() > 1)
+		
+		else if (presentInFirstRow.size() > 1)
 		{
 			message += "File appears to have data oriented in columns. " +
 					"Check for row headings: \n" +
-					AnnotatedBeanReporter.concat(absentFromCol, " ,");
+					AnnotatedBeanReporter.concat(absentFromFirstCol, " ,");
+			throw new IllegalArgumentException(message);
 		}
-		else message += " Could not determine orientation of data in input file";
 
+		else message += " Could not determine orientation of data in input file";
 		throw new IllegalArgumentException(message);
 	}
 
