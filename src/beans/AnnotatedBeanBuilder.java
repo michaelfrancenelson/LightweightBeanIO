@@ -220,7 +220,6 @@ public class AnnotatedBeanBuilder {
 		List<String> fieldNames = new ArrayList<>();
 		for (Field f : ff) 
 		{
-			System.out.println("BeanBuilder: " + f.getName());
 			fieldNames.add(f.getName());
 		}
 			
@@ -242,7 +241,7 @@ public class AnnotatedBeanBuilder {
 
 		/* Test for column orientation. */
 		List<String> firstCol = new ArrayList<>();
-		for (List<String> l : data) { firstCol.add(l.get(0)); }
+		for (List<String> l : data) { if (l.size() > 0) firstCol.add(l.get(0)); }
 
 		for (String f : fieldNames) {
 			if (!firstCol.contains(f)) absentFromFirstCol.add(f); 
