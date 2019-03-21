@@ -15,7 +15,7 @@ import beans.sampleBeans.SimpleStaticBean;
 
 public class AnnotatedBeanTest {
 
-	@Test
+//	@Test
 	public void testFileFactories() 
 	{
 		String fileCSV = "testData/TestBeanFactory.csv";
@@ -48,7 +48,7 @@ public class AnnotatedBeanTest {
 		}
 	}
 
-	@Test
+//	@Test
 	public void testStaticReader()
 	{
 		String fileX = "testData/TestStaticFieldBean.xlsx";
@@ -92,7 +92,7 @@ public class AnnotatedBeanTest {
 		rep.writeCSV(fileSave);
 	}
 
-	@Test
+//	@Test
 	public void testInitilize()
 	{
 		String fileXLSXT = "testData/TestBeanFactoryTransposed.xlsx";

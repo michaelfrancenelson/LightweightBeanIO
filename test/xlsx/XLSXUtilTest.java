@@ -10,7 +10,7 @@ import beans.sampleBeans.SimpleBean;
 
 public class XLSXUtilTest {
 
-	@Test
+//	@Test
 	public void test() {
 		
     	String filename = "testData/annotatedTestBean.xlsx";
